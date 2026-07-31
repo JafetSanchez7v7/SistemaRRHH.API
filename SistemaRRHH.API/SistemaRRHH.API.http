@@ -1,0 +1,6 @@
+@SistemaRRHH.API_HostAddress = http://localhost:5255
+
+GET {{SistemaRRHH.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
