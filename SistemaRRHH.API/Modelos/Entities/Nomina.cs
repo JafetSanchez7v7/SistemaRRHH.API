@@ -1,4 +1,4 @@
-﻿namespace SistemaRRHH.API.Entities
+﻿namespace SistemaRRHH.API.Modelos.Entities
 {
     public class Nomina
     {
