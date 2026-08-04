@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SistemaRRHH.API.Persistencia.Contexto;
 
@@ -11,9 +12,11 @@ using SistemaRRHH.API.Persistencia.Contexto;
 namespace SistemaRRHH.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260801050128_Vacaciones")]
+    partial class Vacaciones
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,9 +87,6 @@ namespace SistemaRRHH.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmpleadoId"));
 
-                    b.Property<bool>("Activo")
-                        .HasColumnType("bit");
-
                     b.Property<int>("AreaId")
                         .HasColumnType("int");
 
@@ -105,14 +105,10 @@ namespace SistemaRRHH.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Puesto")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<decimal>("SalarioBase")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("UsuarioId")
+                    b.Property<int>("UsuarioId")
                         .HasColumnType("int");
 
                     b.HasKey("EmpleadoId");
@@ -273,7 +269,9 @@ namespace SistemaRRHH.API.Migrations
 
                     b.HasOne("SistemaRRHH.API.Modelos.Entities.Usuario", "Usuario")
                         .WithMany()
-                        .HasForeignKey("UsuarioId");
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Area");
 

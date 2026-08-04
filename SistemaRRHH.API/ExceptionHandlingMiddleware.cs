@@ -8,12 +8,12 @@
             {
                 await next(context);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = 500;
-                var response = ApiResponse<string>.Failure("Ocurrió un error interno en el servidor.");
-                var jsonResponse = System.Text.Json.JsonSerializer.Serialize(response);
+                Console.WriteLine(ex.Message); 
+                var jsonResponse = System.Text.Json.JsonSerializer.Serialize(new {error = "Ocurrio un error interno en el servidor"});
                 await context.Response.WriteAsync(jsonResponse);
             }
         }

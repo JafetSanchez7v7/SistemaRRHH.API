@@ -7,7 +7,7 @@ namespace SistemaRRHH.API.Modelos.Dtos.Usuarios
     public record UsuarioDto(int Id, string Nombre, string Email, string RolNombre, bool Activo)
     {
         public static UsuarioDto ToUsuarioDto(Usuario u) =>
-      new(u.UsuarioId, u.NombreUsuario, u.Email, u.Rol.NombreRol, u.Activo);
+      new(u.UsuarioId, u.NombreUsuario, u.Email, u.Rol?.NombreRol ?? "indefinido", u.Activo);
     }
     public record CreateUsuarioDto(
          [Required(ErrorMessage = "El Nombre Es Requerido")]

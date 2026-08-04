@@ -21,16 +21,16 @@ namespace SistemaRRHH.API.Helpers
              new Claim(ClaimTypes.Email, usuario.Email),
              new Claim(ClaimTypes.Name, usuario.NombreUsuario),
              new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-             new Claim(ClaimTypes.Role, usuario.Rol.NombreRol)
+             new Claim(ClaimTypes.Role, usuario.Rol?.NombreRol ?? string.Empty)
          };
            
-               
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var jwtKey = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key no configurado");
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
+                issuer: _configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("Jwt:Issuer no configurado"),
+                audience: _configuration["Jwt:Audience"] ?? throw new InvalidOperationException("Jwt:Audience no configurado"),
                 claims: claims,
                 expires: DateTime.UtcNow.AddDays(1),
                 signingCredentials: creds
