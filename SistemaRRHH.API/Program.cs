@@ -165,7 +165,7 @@ usersGroup.MapPut("/{id}", async (AppDbContext context, int id, [FromBody] Updat
     return Results.Ok(result);
 });
 
-usersGroup.MapPatch("/{id}/cambiar-contraseña", async (AppDbContext context, int id, [FromBody] UpdateContraseña dto) =>
+usersGroup.MapPatch("/cambiar-password/{id}", async (AppDbContext context, int id, [FromBody] UpdateContraseña dto) =>
 {
     if (id <= 0) return Results.BadRequest(new { error = "Id Invalido" });
 
@@ -603,7 +603,7 @@ adminAsistenciaGroup.MapGet("/empleado/{id}", async (
 var vacacionesGroup = app.MapGroup("api/vacaciones")
     .WithTags("Vacaciones")
     .RequireAuthorization();
-vacacionesGroup.MapPost("/empleadosvacaciones", async (AppDbContext context) =>
+vacacionesGroup.MapGet("/empleadosvacaciones", async (AppDbContext context) =>
 {
     var hoy = DateTime.Today;
     var empleadosEnVacaciones = await context.Vacaciones.AsNoTracking().CountAsync(v => v.Estado.ToLower() == "aprobada".ToLower() && v.FechaInicio <= hoy && v.FechaFin >= hoy);
@@ -894,7 +894,16 @@ nominaGroup.MapGet("/", async (
         .ThenByDescending(n => n.Id)
         .Skip((pageIndex - 1) * pageSize)
         .Take(pageSize)
-        .Select(n => NominaDto.FromEntity(n))
+        .Select(n => new NominaDto(
+            n.Id,
+            n.IdEmpleado,
+            n.Empleado != null ? n.Empleado.Nombre : string.Empty,
+            n.Periodo,
+            n.SalarioBase,
+            n.HorasExtrasMonto,
+            n.DeduccionesLey,
+            n.DeduccionesTardanzas,
+            n.SalarioNeto))
         .ToListAsync();
 
     var payload = new PagedResultDto<NominaDto>(items, pageIndex, pageSize, totalCount);
@@ -912,7 +921,18 @@ app.MapGet("api/miNomina", async (AppDbContext context, ClaimsPrincipal user) =>
 
     if (nomina is null) return Results.NotFound(new { error = "Nomina no encontrada" });
 
-    var response = ApiResponse<NominaDto>.Success(NominaDto.FromEntity(nomina), "Nomina obtenida exitosamente");
+    var response = ApiResponse<NominaDto>.Success(
+        new NominaDto(
+            nomina.Id,
+            nomina.IdEmpleado,
+            nomina.Empleado?.Nombre ?? string.Empty,
+            nomina.Periodo,
+            nomina.SalarioBase,
+            nomina.HorasExtrasMonto,
+            nomina.DeduccionesLey,
+            nomina.DeduccionesTardanzas,
+            nomina.SalarioNeto),
+        "Nomina obtenida exitosamente");
     return Results.Ok(response);
 });
 

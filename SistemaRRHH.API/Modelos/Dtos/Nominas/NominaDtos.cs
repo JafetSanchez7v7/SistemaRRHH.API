@@ -18,7 +18,7 @@ namespace SistemaRRHH.API.Modelos.Dtos.Nominas
             new(
                 nomina.Id,
                 nomina.IdEmpleado,
-                nomina.Empleado?.Nombre ?? string.Empty,
+                nomina.Empleado.Nombre,
                 nomina.Periodo,
                 nomina.SalarioBase,
                 nomina.HorasExtrasMonto,
