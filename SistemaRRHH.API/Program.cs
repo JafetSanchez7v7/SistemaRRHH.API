@@ -600,6 +600,31 @@ adminAsistenciaGroup.MapGet("/empleado/{id}", async (
     return Results.Ok(response);
 });
 
+
+
+    adminAsistenciaGroup.MapGet("/hoy", async (AppDbContext contexto, DateTime fecha) =>
+    {
+        //mapeamos las asistencias de hoy para la tabla,
+        var query = await contexto.Asistencias.AsNoTracking().Include(a => a.Empleado).Where(e => e.Fecha.Date == fecha.Date && e.estado.ToLower() == "presente").
+        Select(a => AsistenciaDto.FromEntity(a)
+        ).ToListAsync();
+        var totalEmpleados = await contexto.Empleados.CountAsync();
+
+        var empleadosVacaciones =await contexto.Vacaciones.AsNoTracking().CountAsync(v => v.Estado.ToLower() == "aprobada".ToLower() && v.FechaInicio <= DateTime.Today && v.FechaFin >= DateTime.Today);
+        var empleadosAusentes = totalEmpleados - query.Count - empleadosVacaciones;
+
+        var reporte = new
+        {
+            items = query,
+            faltas = empleadosAusentes,
+            vacaciones = empleadosVacaciones,
+            empleadosPresentes = query.Count
+        };
+
+        return Results.Ok(ApiResponse<object>.Success(reporte, "reporte obtenido exitosamente"));
+
+    });
+
 var vacacionesGroup = app.MapGroup("api/vacaciones")
     .WithTags("Vacaciones")
     .RequireAuthorization();
