@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SistemaRRHH.API.Entities;
+using SistemaRRHH.API.Modelos.Entities;
 
 namespace SistemaRRHH.API.Persistencia.Contexto
 {
@@ -15,5 +15,7 @@ namespace SistemaRRHH.API.Persistencia.Contexto
         public DbSet<Empleado> Empleados => Set<Empleado>();
         public DbSet<Asistencia> Asistencias => Set<Asistencia>();
         public DbSet<Nomina> Nominas => Set<Nomina>();
+        public DbSet<Vacacion> Vacaciones => Set<Vacacion>();
+        
     }
 }
